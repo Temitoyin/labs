@@ -1,0 +1,149 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  position: relative;
+  font-family: "Raleway", sans-serif;
+  font-weight: 500;
+}
+.zoom-area {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+.zoom-text {
+  display: flex;
+  text-align: center;
+  font-size: 2.5rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.zoom-text__span {
+  display: inline-block;
+  font-size: 4rem;
+  white-space: nowrap;
+}
+.gallery {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+}
+
+.zoom-images-container {
+    height: 0;
+      width: 100vw;
+  position: relative;
+  overflow: hidden;
+}
+
+.zoom-images {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  
+}
+.img-container {
+  width: 100%;
+  height: 100%;
+  border: 10px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Base image styles */
+.zoom-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  will-change: transform;
+  position: absolute;
+  transform: scale(0);
+  transform-origin: 53% 50% ;
+  top: 0;
+  left: 0;
+}
+
+/* Layering via z-index */
+.zoom-image1 {
+  z-index: 1;
+}
+
+.zoom-image2 {
+  z-index: 2;
+}
+
+.zoom-image3 {
+  z-index: 3;
+}
+
+.zoom-image4 {
+  z-index: 4;
+}
+
+.zoom-image5 {
+  z-index: 5;
+}
+.zoom-image6 {
+  z-index: 6;
+}
+.zoom-image7 {
+  z-index: 7;
+}
+.gallery-wrapper {
+    position: relative;
+    height: 200vh;
+    /* This creates the scrollable space */
+}
+
+.gallery {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    pointer-events: none;
+}
+
+.gallery-image-container {
+    width: 114px;
+    height: 82px;
+    position: absolute;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 100%;
+}
+
+/* Add this to create visible scroll content */
+.scroll-content {
+    position: relative;
+    z-index: 10;
+    background: transparent;
+    height: 200vh;
+    pointer-events: none;
+}
+
+.cover{
+    height: 100vh;
+    width: 100vw;
+    border: 1px solid black;
+}
+.webgl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  outline: none;
+}
