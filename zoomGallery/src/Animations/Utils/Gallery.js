@@ -9,6 +9,7 @@ export default class Gallery {
     constructor() {
         this.galleryImageContainer = document.querySelectorAll('.gallery-image-container');
         this.galleryImages = document.querySelectorAll('.gallery-image');
+        this.backgroundImages = document.querySelectorAll('.background-image');
         this.textItems = document.querySelectorAll('.text-item'); // Add text items selector
         this.width = window.innerWidth;
         this.height = window.innerHeight;
@@ -21,6 +22,7 @@ export default class Gallery {
         this.createSVGPath();
         this.positionImagesOnPath();
         this.scrollMotionPath();
+        // this.animateClosingSection();
     }
     createSVGPath() {
         // Create SVG element
@@ -76,7 +78,7 @@ export default class Gallery {
             gsap.set(img, {
                 motionPath: {
                     path: this.circlePath,
-                    start: 0,
+                    start: 2,
                     end: 0,
                     autoRotate: false,
                     offsetX: -img.offsetWidth / 2,
@@ -86,7 +88,9 @@ export default class Gallery {
         });
     }
 
-    scrollMotionPath(element, path) {
+
+    // Scroll motion path for gallery images
+    scrollMotionPath() {
         gsap.to(this.galleryImageContainer, {
             motionPath: {
                 path: this.circlePath,
@@ -94,17 +98,115 @@ export default class Gallery {
                 alignOrigin: [-0.5, -0.5]
             },
             transformOrigin: "50% 50%",
-            stagger: 0.03, // Delay between each image animation
+            stagger: 0.03,
             scrollTrigger: {
                 trigger: ".gallery-wrapper",
-                start: "-50%  top",
-                end: "top center",
-                scrub: 1,
-                markers: true,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 7,
                 invalidateOnRefresh: true,
                 anticipatePin: 1,
+                onUpdate: () => {
+                    this.updateActiveBackground();
+                },
+                onLeaveBack: () => {
+                    console.log('Leaving back, removing active background');
+                    this.removeActiveBackground();
+                }
             }
         }, '#zoom-timeline+=1');
+    }
+
+
+    removeActiveBackground() {
+        const activeImage = Array.from(this.backgroundImages).find(img =>
+            img.classList.contains('isactive')
+        );
+
+        if (activeImage) {
+            activeImage.classList.remove('isactive');
+            console.log('Removed active from current background image');
+            return true;
+        }
+
+        return false;
+    }
+
+
+    updateActiveBackground() {
+        const screenCenterY = window.innerHeight / 2;
+        let closestIndex = 0;
+        let closestDistance = Infinity;
+
+        this.galleryImageContainer.forEach((img, index) => {
+            const rect = img.getBoundingClientRect();
+            const imgCenterY = rect.top + rect.height / 2;
+            const distance = Math.abs(imgCenterY - screenCenterY);
+
+            if (distance < closestDistance) {
+                closestDistance = distance;
+                closestIndex = index;
+            }
+        });
+
+        // Update background images with flash effect on change
+        let hasChanged = false;
+        this.backgroundImages.forEach((img, index) => {
+            const wasActive = img.classList.contains('isactive');
+            if (index === closestIndex && !wasActive) {
+                img.classList.add('isactive');
+                hasChanged = true;
+            }
+            else if (index !== closestIndex && wasActive) {
+                img.classList.remove('isactive');
+            }
+        });
+
+    }
+    animateClosingSection() {
+        gsap.fromTo(".closing-section",
+            {
+                y: "100vh",
+                opacity: 1
+            },
+            {
+                y: "0vh",
+                opacity: 1,
+                ease: "power3.out",
+                scrollTrigger: {
+                    trigger: ".gallery-wrapper",
+                    start: "top 90%",
+                    end: "bottom center",
+                    scrub: 7,
+                    markers: true,
+                    id: "closingSection",
+                    invalidateOnRefresh: true,
+
+                }
+            }
+        );
+    }
+
+    resize() {
+
+        this.width = window.innerWidth;
+        this.height = window.innerHeight;
+        this.wheelCenterX = this.width / 2;
+        this.wheelCenterY = this.height / 2;
+        this.radius = this.width / 2 * 0.8;
+
+        // Update SVG path
+        const pathData = `M ${this.wheelCenterX} ${this.wheelCenterY - this.radius}
+                         A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX} ${this.wheelCenterY + this.radius}`;
+        this.circlePath.setAttribute('d', pathData);
+
+        this.fullCircle.setAttribute('d', `M ${this.wheelCenterX + this.radius} ${this.wheelCenterY}
+                               A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX - this.radius} ${this.wheelCenterY}
+                               A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX + this.radius} ${this.wheelCenterY}`);
+
+
+        // Update positions of images
+        this.positionImagesOnPath();
     }
 
 
