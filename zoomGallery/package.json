@@ -1,0 +1,20 @@
+{
+  "name": "zoomgallery",
+  "version": "1.0.0",
+  "description": "zoom gallery replication",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "author": "Bankaidev",
+  "license": "ISC",
+  "devDependencies": {
+    "vite": "^7.0.4",
+    "vite-plugin-restart": "^1.0.0"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "lenis": "^1.3.7"
+  }
+}
