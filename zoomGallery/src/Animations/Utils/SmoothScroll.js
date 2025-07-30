@@ -9,7 +9,7 @@ import Lenis from 'lenis'
 export default class SmoothScroll {
     constructor() {
         this.options = {
-            lerp: 0.1, // Reduced for smoother integration
+            lerp: 0.4, // Reduced for smoother integration
             direction: 'vertical',
             gestureDirection: 'vertical',
             smooth: true,

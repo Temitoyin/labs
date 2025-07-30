@@ -7,6 +7,7 @@ gsap.registerPlugin(MotionPathPlugin)
 
 export default class Gallery {
     constructor() {
+        this.zoomImageContainer = document.querySelector('.zoom-images');
         this.galleryImageContainer = document.querySelectorAll('.gallery-image-container');
         this.galleryImages = document.querySelectorAll('.gallery-image');
         this.backgroundImages = document.querySelectorAll('.background-image');
@@ -44,22 +45,22 @@ export default class Gallery {
         this.circlePath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
         this.circlePath.setAttribute('d', pathData);
         this.circlePath.setAttribute('fill', 'none');
-        this.circlePath.setAttribute('stroke', 'red');
-        this.circlePath.setAttribute('stroke-width', '2');
+        // this.circlePath.setAttribute('stroke', 'red');
+        // this.circlePath.setAttribute('stroke-width', '2');
         this.circlePath.setAttribute('id', 'circlePath');
 
         // Also create a full circle for visual reference
-        const fullCircleData = `M ${this.wheelCenterX + this.radius} ${this.wheelCenterY}
-                               A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX - this.radius} ${this.wheelCenterY}
-                               A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX + this.radius} ${this.wheelCenterY}`;
+        // const fullCircleData = `M ${this.wheelCenterX + this.radius} ${this.wheelCenterY}
+        //                        A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX - this.radius} ${this.wheelCenterY}
+        //                        A ${this.radius} ${this.radius} 0 0 1 ${this.wheelCenterX + this.radius} ${this.wheelCenterY}`;
 
-        this.fullCircle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        this.fullCircle.setAttribute('d', fullCircleData);
-        this.fullCircle.setAttribute('fill', 'none');
-        this.fullCircle.setAttribute('stroke', 'rgba(255, 0, 0, 0.2)');
-        this.fullCircle.setAttribute('stroke-width', '1');
+        // this.fullCircle = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        // this.fullCircle.setAttribute('d', fullCircleData);
+        // this.fullCircle.setAttribute('fill', 'none');
+        // this.fullCircle.setAttribute('stroke', 'rgba(255, 0, 0, 0.2)');
+        // this.fullCircle.setAttribute('stroke-width', '1');
 
-        this.svg.appendChild(this.fullCircle);
+        // this.svg.appendChild(this.fullCircle);
         this.svg.appendChild(this.circlePath);
         document.body.appendChild(this.svg);
     }
@@ -68,13 +69,10 @@ export default class Gallery {
         const count = this.galleryImages.length;
 
         this.galleryImageContainer.forEach((img, index) => {
-            // Position images evenly distributed along the entire semicircle path
-            // From 0 (top of semicircle) to 1 (bottom of semicircle)
             const progress = index / (count - 1); // This gives even distribution from 0 to 1
             img.style.transformOrigin = 'center center';
 
             console.log(progress, 'progress');
-            // Set initial position using MotionPath
             gsap.set(img, {
                 motionPath: {
                     path: this.circlePath,
@@ -125,7 +123,7 @@ export default class Gallery {
 
         if (activeImage) {
             activeImage.classList.remove('isactive');
-            console.log('Removed active from current background image');
+            this.zoomImageContainer.style.opacity = '1'; // Hide zoom image container
             return true;
         }
 
@@ -137,7 +135,6 @@ export default class Gallery {
         const screenCenterY = window.innerHeight / 2;
         let closestIndex = 0;
         let closestDistance = Infinity;
-
         this.galleryImageContainer.forEach((img, index) => {
             const rect = img.getBoundingClientRect();
             const imgCenterY = rect.top + rect.height / 2;
@@ -152,12 +149,14 @@ export default class Gallery {
         // Update background images with flash effect on change
         let hasChanged = false;
         this.backgroundImages.forEach((img, index) => {
+
             const wasActive = img.classList.contains('isactive');
             if (index === closestIndex && !wasActive) {
                 img.classList.add('isactive');
                 hasChanged = true;
             }
             else if (index !== closestIndex && wasActive) {
+                this.zoomImageContainer.style.opacity = '0';
                 img.classList.remove('isactive');
             }
         });
